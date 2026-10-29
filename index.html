@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Water Treatment System Logging List - HDU SGH</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 20px;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .header img {
+      width: 110px;
+      height: auto;
+      margin-bottom: 10px;
+      border-radius: 50%;
+    }
+    h1 {
+      color: #007bff;
+      font-size: 1.7em;
+      margin: 0 0 5px 0;
+    }
+    h2 {
+      color: #6c757d;
+      font-size: 1.05em;
+      font-weight: normal;
+      margin: 0;
+    }
+    h3 {
+      margin-top: 25px;
+      color: #343a40;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 6px;
+      font-size: 1.15em;
+    }
+    
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 12px;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: #333;
+    }
+    .field-title {
+      white-space: nowrap;
+    }
+    .ref-tag {
+      font-weight: 500;
+      color: #0d6efd;
+      font-size: 0.88em;
+      white-space: nowrap;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 9px 11px;
+      margin-bottom: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+      background-color: #fff;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.2);
+    }
+
+    ::placeholder {
+      color: #adb5bd;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    .item-card {
+      background: #fdfdfd;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 16px 18px;
+      margin-bottom: 15px;
+    }
+    .item-card-header {
+      font-weight: 700;
+      color: #007bff;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .asset-row {
+      margin-bottom: 12px;
+    }
+    .asset-val {
+      font-size: 14px;
+      color: #212529;
+      margin-top: 2px;
+    }
+    .asset-divider {
+      border: 0;
+      border-top: 1px dashed #cbd5e1;
+      margin: 15px 0;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+    .btn-submit {
+      background-color: #28a745;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      width: 70%;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .btn-submit:hover { background-color: #218838; }
+
+    .btn-cancel {
+      background-color: #6c757d;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      width: 30%;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .btn-cancel:hover { background-color: #5a6268; }
+
+    /* Modal Windows */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 28px 30px;
+      border-radius: 8px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      animation: modalSlide 0.3s ease;
+    }
+    @keyframes modalSlide {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .notice-icon {
+      width: 60px;
+      height: 60px;
+      background: #fff3cd;
+      color: #856404;
+      border: 2px solid #ffeeba;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0 auto 15px auto;
+    }
+    .tick-icon {
+      width: 60px;
+      height: 60px;
+      background: #d4edda;
+      color: #28a745;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      margin: 0 auto 15px auto;
+    }
+
+    .notice-box {
+      text-align: left;
+      background-color: #fdfdfe;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #ffc107;
+      padding: 14px 16px;
+      margin: 15px 0 22px 0;
+      border-radius: 4px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #333;
+    }
+    .notice-box ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .notice-box li {
+      margin-bottom: 8px;
+    }
+    .notice-box li:last-child {
+      margin-bottom: 0;
+    }
+
+    #message-area {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 4px;
+      text-align: center;
+      display: none;
+      font-weight: bold;
+    }
+    .error { background-color: #ffe6e6; color: red; border: 1px solid red; }
+    .normal { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 15px;
+      border-top: 1px solid #ced4da;
+      font-size: 0.8em;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .action-btns { flex-direction: column; }
+      .btn-submit, .btn-cancel { width: 100% !important; }
+      label { flex-direction: row; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Startup Notice Popup Modal -->
+<div id="noticeModal" class="modal" style="display: flex;">
+  <div class="modal-content">
+    <div class="notice-icon">!</div>
+    <h3 style="margin-top:0; color:#343a40; border:none; padding:0; font-size: 1.3em;">IMPORTANT CLINICAL NOTICE</h3>
+    <p style="font-size: 13px; color: #6c757d; margin: 4px 0 10px 0;">Standard Operating Protocol &bull; Water Treatment System</p>
+    
+    <div class="notice-box">
+      <ul>
+        <li><b>System Stabilization:</b> Ensure the RO System has been in continuous operation for <b>at least 10 minutes</b> before recording log parameters to guarantee stable, accurate baseline values.</li>
+        <li><b>Brine Tank Replenishment:</b> Refill the brine tank using only <b>high-purity, non-iodized solar salt</b> and water according to manufacturer guidelines to ensure proper scheduled resin regeneration and prevent softener exhaustion.</li>
+      </ul>
+    </div>
+
+    <button type="button" class="btn-submit" style="width: 100%; padding: 12px;" onclick="closeNoticeModal()">Acknowledge & Proceed</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <img src="https://lh3.googleusercontent.com/d/1tCDAMimy_b0x9kRmWNyYMn4voR9Ynr0J" alt="Logo">
+    <h1>DAILY WATER TREATMENT SYSTEM LOGGING LIST</h1>
+    <h2>Haemodialysis Unit, Sarawak General Hospital</h2>
+  </div>
+
+  <form id="dailyForm">
+    <!-- Staff & RO Select -->
+    <div class="grid-2">
+      <div>
+        <label for="staffName"><span class="field-title">Name of Staff</span></label>
+        <input type="text" id="staffName" placeholder="e.g. SN Helona / PPP Glen" required>
+      </div>
+      <div>
+        <label for="selectRo"><span class="field-title">Select RO System</span></label>
+        <select id="selectRo" required onchange="handleRoSelect(this.value)">
+          <option value="">-- Choose RO System --</option>
+          <option value="RO 01">RO 01</option>
+          <option value="RO 02">RO 02</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Structured Asset Card -->
+    <div id="assetSection" class="item-card" style="display: none; background: #f8fafc;">
+      <div class="item-card-header">Asset Details</div>
+
+      <div class="asset-row" style="font-size: 15px;">
+        <b>RO No.:</b> <span id="astRo" style="font-weight: bold; color: #007bff;">-</span>
+      </div>
+
+      <div class="grid-3 asset-row">
+        <div>
+          <b>Brand:</b>
+          <div class="asset-val" id="astBrand">-</div>
+        </div>
+        <div>
+          <b>Model:</b>
+          <div class="asset-val" id="astModel">-</div>
+        </div>
+        <div>
+          <b>Serial No.:</b>
+          <div class="asset-val" id="astSerial">-</div>
+        </div>
+      </div>
+
+      <div class="grid-2 asset-row">
+        <div>
+          <b>KEW.PA No.:</b>
+          <div class="asset-val" id="astAsset">-</div>
+        </div>
+        <div>
+          <b>ASIS No.:</b>
+          <div class="asset-val" id="astAssis">-</div>
+        </div>
+      </div>
+
+      <div class="grid-2 asset-row">
+        <div>
+          <b>Year made:</b> <span id="astYear" style="color:#212529;">-</span>
+        </div>
+        <div>
+          <b>Status:</b> <span id="astStatus" style="color:#212529;">-</span>
+        </div>
+      </div>
+
+      <hr class="asset-divider">
+
+      <div class="grid-2 asset-row">
+        <div>
+          <b>Last Log Date:</b> <span id="astLastDate" style="color:#212529;">-</span>
+        </div>
+        <div>
+          <b>Last Log By:</b> <span id="astLastBy" style="color:#212529;">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Fields for RO 01 -->
+    <div id="secRO01" style="display: none;">
+      <h3>RO LOGGING LIST (RO 01)</h3>
+
+      <div class="item-card">
+        <div class="item-card-header">Subtopic 1: System Pressure</div>
+        <div class="grid-3">
+          <div><label><span class="field-title" id="lbl_r01_a10">System In</span><span class="ref-tag" id="ref_r01_b10"></span></label><input type="text" id="r01_sysIn"></div>
+          <div><label><span class="field-title" id="lbl_r01_a11">System Out</span><span class="ref-tag" id="ref_r01_b11"></span></label><input type="text" id="r01_sysOut"></div>
+          <div><label><span class="field-title" id="lbl_r01_a12">Raw Water</span><span class="ref-tag" id="ref_r01_b12"></span></label><input type="text" id="r01_rawWater"></div>
+          <div><label><span class="field-title" id="lbl_r01_a13">Filter</span><span class="ref-tag" id="ref_r01_b13"></span></label><input type="text" id="r01_filter"></div>
+          <div><label><span class="field-title" id="lbl_r01_a14">Carbon 1</span><span class="ref-tag" id="ref_r01_b14"></span></label><input type="text" id="r01_carbon1"></div>
+          <div><label><span class="field-title" id="lbl_r01_a15">Carbon 2</span><span class="ref-tag" id="ref_r01_b15"></span></label><input type="text" id="r01_carbon2"></div>
+          <div><label><span class="field-title" id="lbl_r01_a16">Guard Filter In</span><span class="ref-tag" id="ref_r01_b16"></span></label><input type="text" id="r01_guardIn"></div>
+          <div><label><span class="field-title" id="lbl_r01_a17">Guard Filter Out</span><span class="ref-tag" id="ref_r01_b17"></span></label><input type="text" id="r01_guardOut"></div>
+          <div><label><span class="field-title" id="lbl_r01_a18">Permeate</span><span class="ref-tag" id="ref_r01_b18"></span></label><input type="text" id="r01_permeate"></div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-card-header">Subtopic 2: System Flow</div>
+        <div class="grid-4">
+          <div><label><span class="field-title" id="lbl_r01_a20">Conductivity</span><span class="ref-tag" id="ref_r01_b20"></span></label><input type="text" id="r01_conductivity"></div>
+          <div><label><span class="field-title" id="lbl_r01_a21">Permeate Flow</span><span class="ref-tag" id="ref_r01_b21"></span></label><input type="text" id="r01_permFlow"></div>
+          <div><label><span class="field-title" id="lbl_r01_a22">Reject</span><span class="ref-tag" id="ref_r01_b22"></span></label><input type="text" id="r01_reject"></div>
+          <div><label><span class="field-title" id="lbl_r01_a23">RO Run Hour</span><span class="ref-tag" id="ref_r01_b23"></span></label><input type="text" id="r01_runHour"></div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-card-header">Subtopic 3: System Maintenance</div>
+        <div class="grid-3">
+          <div><label><span class="field-title" id="lbl_r01_a25">Hardness</span><span class="ref-tag" id="ref_r01_b25"></span></label><input type="text" id="r01_hardness" placeholder="0"></div>
+          <div><label><span class="field-title" id="lbl_r01_a26">Chlorine</span><span class="ref-tag" id="ref_r01_b26"></span></label><input type="text" id="r01_chlorine" placeholder="0"></div>
+          <div>
+            <label><span class="field-title" id="lbl_r01_a27">Brine Tank</span></label>
+            <select id="r01_brineTank">
+              <option value="Done">Done</option>
+              <option value="Not Done">Not Done</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Fields for RO 02 -->
+    <div id="secRO02" style="display: none;">
+      <h3>RO LOGGING LIST (RO 02)</h3>
+
+      <div class="item-card">
+        <div class="item-card-header">Subtopic 1: Water Purification System</div>
+        <div class="grid-4">
+          <div><label><span class="field-title" id="lbl_r02_a10">Raw Water</span><span class="ref-tag" id="ref_r02_b10"></span></label><input type="text" id="r02_rawWater"></div>
+          <div><label><span class="field-title" id="lbl_r02_a11">Sediment</span><span class="ref-tag" id="ref_r02_b11"></span></label><input type="text" id="r02_sediment"></div>
+          <div><label><span class="field-title" id="lbl_r02_a12">Carbon 1</span><span class="ref-tag" id="ref_r02_b12"></span></label><input type="text" id="r02_carbon1"></div>
+          <div><label><span class="field-title" id="lbl_r02_a13">Carbon 2</span><span class="ref-tag" id="ref_r02_b13"></span></label><input type="text" id="r02_carbon2"></div>
+          <div><label><span class="field-title" id="lbl_r02_a14">Carbon 3</span><span class="ref-tag" id="ref_r02_b14"></span></label><input type="text" id="r02_carbon3"></div>
+          <div><label><span class="field-title" id="lbl_r02_a15">Guard Filter In</span><span class="ref-tag" id="ref_r02_b15"></span></label><input type="text" id="r02_guardIn"></div>
+          <div><label><span class="field-title" id="lbl_r02_a16">Guard Filter Out</span><span class="ref-tag" id="ref_r02_b16"></span></label><input type="text" id="r02_guardOut"></div>
+          <div><label><span class="field-title" id="lbl_r02_a17">System In</span><span class="ref-tag" id="ref_r02_b17"></span></label><input type="text" id="r02_sysIn"></div>
+          <div><label><span class="field-title" id="lbl_r02_a18">System Out</span><span class="ref-tag" id="ref_r02_b18"></span></label><input type="text" id="r02_sysOut"></div>
+          <div><label><span class="field-title" id="lbl_r02_a19">Permeate</span><span class="ref-tag" id="ref_r02_b19"></span></label><input type="text" id="r02_permeate"></div>
+          <div><label><span class="field-title" id="lbl_r02_a20">Permeate Flow</span><span class="ref-tag" id="ref_r02_b20"></span></label><input type="text" id="r02_permFlow"></div>
+          <div><label><span class="field-title" id="lbl_r02_a21">Reject Flow</span><span class="ref-tag" id="ref_r02_b21"></span></label><input type="text" id="r02_rejectFlow"></div>
+          <div><label><span class="field-title" id="lbl_r02_a22">Raw Conduct.</span><span class="ref-tag" id="ref_r02_b22"></span></label><input type="text" id="r02_rawCond"></div>
+          <div><label><span class="field-title" id="lbl_r02_a23">Perm Conduct.</span><span class="ref-tag" id="ref_r02_b23"></span></label><input type="text" id="r02_permCond"></div>
+          <div><label><span class="field-title" id="lbl_r02_a24">Rejection Rate</span><span class="ref-tag" id="ref_r02_b24"></span></label><input type="text" id="r02_rejectRate"></div>
+          <div><label><span class="field-title" id="lbl_r02_a25">RO Run Hour</span><span class="ref-tag" id="ref_r02_b25"></span></label><input type="text" id="r02_runHour"></div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-card-header">Subtopic 2: System Maintenance</div>
+        <div class="grid-3">
+          <div><label><span class="field-title" id="lbl_r02_a28">Carbon Filter 1</span><span class="ref-tag" id="ref_r02_b28"></span></label><input type="text" id="r02_carbonF1"></div>
+          <div><label><span class="field-title" id="lbl_r02_a29">Carbon Filter 2 (Optional)</span><span class="ref-tag" id="ref_r02_b29"></span></label><input type="text" id="r02_carbonF2" placeholder="Optional"></div>
+          <div><label><span class="field-title" id="lbl_r02_a30">Carbon Filter 3 (Optional)</span><span class="ref-tag" id="ref_r02_b30"></span></label><input type="text" id="r02_carbonF3" placeholder="Optional"></div>
+          
+          <div><label><span class="field-title" id="lbl_r02_a32">Softener Filter 1</span><span class="ref-tag" id="ref_r02_b32"></span></label><input type="text" id="r02_softener1"></div>
+          <div><label><span class="field-title" id="lbl_r02_a33">Softener Filter 2 (Optional)</span><span class="ref-tag" id="ref_r02_b33"></span></label><input type="text" id="r02_softener2" placeholder="Optional"></div>
+          <div>
+            <label><span class="field-title" id="lbl_r02_a34">Brine Tank</span></label>
+            <select id="r02_brineTank">
+              <option value="Done">Done</option>
+              <option value="Not Done">Not Done</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RO Tank (ROT) Logging List: Now includes UV Light Intensity -->
+    <div id="secTank" style="display: none;">
+      <h3>RO TANK LOGGING LIST</h3>
+      <div class="item-card">
+        <div class="grid-4">
+          <div><label><span class="field-title" id="lbl_rot_uv">UV Light Intensity</span><span class="ref-tag" id="ref_rot_uv"></span></label><input type="text" id="rot_uvIntensity" placeholder="Intensity"></div>
+          <div><label><span class="field-title" id="lbl_rot_pre">Pre Filter</span><span class="ref-tag" id="ref_rot_pre"></span></label><input type="text" id="rot_preFilter"></div>
+          <div><label><span class="field-title" id="lbl_rot_post">Post Filter</span><span class="ref-tag" id="ref_rot_post"></span></label><input type="text" id="rot_postFilter"></div>
+          <div><label><span class="field-title" id="lbl_rot_ret">Return</span><span class="ref-tag" id="ref_rot_ret"></span></label><input type="text" id="rot_return"></div>
+        </div>
+      </div>
+
+      <div class="action-btns">
+        <button type="submit" class="btn-submit" id="btnSubmit">Submit Daily Log</button>
+        <button type="button" class="btn-cancel" onclick="resetAll()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="message-area"></div>
+  </form>
+
+  <div class="footer">
+    &copy; Designed and developed by PPP Zulfadlie bin Janie<br>
+    for Haemodialysis Unit, Sarawak General Hospital
+  </div>
+</div>
+
+<!-- Submission Success Modal -->
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <div class="tick-icon">✓</div>
+    <h3 style="margin-top:0; color:#28a745; border:none; padding:0;">Daily Log Recorded</h3>
+    <p id="modalMsg" style="font-size: 13.5px; color: #495057; margin: 10px 0 20px 0;"></p>
+    <button type="button" class="btn-submit" style="width: 100%;" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbwHkqSKWrF_xt3xDc6XRk3F-8opD4WBvfGglxjLwHcKJqohGEyUcEzU6lNcVnkdTq2Ckw/exec";
+
+  function closeNoticeModal() {
+    document.getElementById('noticeModal').style.display = "none";
+  }
+
+  function handleRoSelect(val) {
+    document.getElementById('assetSection').style.display = "none";
+    document.getElementById('secRO01').style.display = "none";
+    document.getElementById('secRO02').style.display = "none";
+    document.getElementById('secTank').style.display = "none";
+
+    if (!val) {
+      hideMessage();
+      return;
+    }
+
+    showMessage("Loading Asset details, descriptions, and dynamic reference values...", "normal");
+    fetch(SCRIPT_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "getAssetAndLastLog", payload: { roNo: val } })
+    })
+    .then(r => r.json())
+    .then(res => {
+      hideMessage();
+      if (res.success) {
+        // 1. Fill Asset Block
+        const a = res.asset;
+        document.getElementById('astRo').textContent = a.roNo;
+        document.getElementById('astBrand').textContent = a.brand;
+        document.getElementById('astModel').textContent = a.model;
+        document.getElementById('astSerial').textContent = a.serialNo;
+        document.getElementById('astAsset').textContent = a.assetNo;
+        document.getElementById('astAssis').textContent = a.assisNo;
+        document.getElementById('astYear').textContent = a.yearMade;
+        document.getElementById('astStatus').textContent = a.status;
+
+        document.getElementById('astLastDate').textContent = res.lastLog.date;
+        document.getElementById('astLastBy').textContent = res.lastLog.by;
+
+        document.getElementById('assetSection').style.display = "block";
+
+        const descs = res.descriptions || {};
+        const refs = res.references || {};
+        const formatRef = (val) => val ? `(${val})` : "";
+        const setLabel = (elemId, defaultText, key) => {
+          const el = document.getElementById(elemId);
+          if (el) el.textContent = descs[key] || defaultText;
+        };
+
+        if (val === "RO 01") {
+          // Dynamic Descriptions (Col A)
+          setLabel('lbl_r01_a10', 'System In', 'A10');
+          setLabel('lbl_r01_a11', 'System Out', 'A11');
+          setLabel('lbl_r01_a12', 'Raw Water', 'A12');
+          setLabel('lbl_r01_a13', 'Filter', 'A13');
+          setLabel('lbl_r01_a14', 'Carbon 1', 'A14');
+          setLabel('lbl_r01_a15', 'Carbon 2', 'A15');
+          setLabel('lbl_r01_a16', 'Guard Filter In', 'A16');
+          setLabel('lbl_r01_a17', 'Guard Filter Out', 'A17');
+          setLabel('lbl_r01_a18', 'Permeate', 'A18');
+
+          setLabel('lbl_r01_a20', 'Conductivity', 'A20');
+          setLabel('lbl_r01_a21', 'Permeate Flow', 'A21');
+          setLabel('lbl_r01_a22', 'Reject', 'A22');
+          setLabel('lbl_r01_a23', 'RO Run Hour', 'A23');
+
+          setLabel('lbl_r01_a25', 'Hardness', 'A25');
+          setLabel('lbl_r01_a26', 'Chlorine', 'A26');
+          setLabel('lbl_r01_a27', 'Brine Tank', 'A27');
+
+          // Dynamic References (Col B)
+          document.getElementById('ref_r01_b10').textContent = formatRef(refs["B10"]);
+          document.getElementById('ref_r01_b11').textContent = formatRef(refs["B11"]);
+          document.getElementById('ref_r01_b12').textContent = formatRef(refs["B12"]);
+          document.getElementById('ref_r01_b13').textContent = formatRef(refs["B13"]);
+          document.getElementById('ref_r01_b14').textContent = formatRef(refs["B14"]);
+          document.getElementById('ref_r01_b15').textContent = formatRef(refs["B15"]);
+          document.getElementById('ref_r01_b16').textContent = formatRef(refs["B16"]);
+          document.getElementById('ref_r01_b17').textContent = formatRef(refs["B17"]);
+          document.getElementById('ref_r01_b18').textContent = formatRef(refs["B18"]);
+
+          document.getElementById('ref_r01_b20').textContent = formatRef(refs["B20"]);
+          document.getElementById('ref_r01_b21').textContent = formatRef(refs["B21"]);
+          document.getElementById('ref_r01_b22').textContent = formatRef(refs["B22"]);
+          document.getElementById('ref_r01_b23').textContent = formatRef(refs["B23"]);
+
+          document.getElementById('ref_r01_b25').textContent = formatRef(refs["B25"]);
+          document.getElementById('ref_r01_b26').textContent = formatRef(refs["B26"]);
+
+          // RO Tank for RO 01 uses Rows 29, 30, 31, 32
+          setLabel('lbl_rot_uv', 'UV Light Intensity', 'A29');
+          setLabel('lbl_rot_pre', 'Pre Filter', 'A30');
+          setLabel('lbl_rot_post', 'Post Filter', 'A31');
+          setLabel('lbl_rot_ret', 'Return', 'A32');
+
+          document.getElementById('ref_rot_uv').textContent   = formatRef(refs["B29"]);
+          document.getElementById('ref_rot_pre').textContent  = formatRef(refs["B30"]);
+          document.getElementById('ref_rot_post').textContent = formatRef(refs["B31"]);
+          document.getElementById('ref_rot_ret').textContent  = formatRef(refs["B32"]);
+
+          document.getElementById('secRO01').style.display = "block";
+          document.getElementById('secRO02').style.display = "none";
+          toggleRequired('secRO01', true);
+          toggleRequired('secRO02', false);
+        } else {
+          // Dynamic Descriptions (Col A)
+          setLabel('lbl_r02_a10', 'Raw Water', 'A10');
+          setLabel('lbl_r02_a11', 'Sediment', 'A11');
+          setLabel('lbl_r02_a12', 'Carbon 1', 'A12');
+          setLabel('lbl_r02_a13', 'Carbon 2', 'A13');
+          setLabel('lbl_r02_a14', 'Carbon 3', 'A14');
+          setLabel('lbl_r02_a15', 'Guard Filter In', 'A15');
+          setLabel('lbl_r02_a16', 'Guard Filter Out', 'A16');
+          setLabel('lbl_r02_a17', 'System In', 'A17');
+          setLabel('lbl_r02_a18', 'System Out', 'A18');
+          setLabel('lbl_r02_a19', 'Permeate', 'A19');
+          setLabel('lbl_r02_a20', 'Permeate Flow', 'A20');
+          setLabel('lbl_r02_a21', 'Reject Flow', 'A21');
+          setLabel('lbl_r02_a22', 'Raw Conduct.', 'A22');
+          setLabel('lbl_r02_a23', 'Perm Conduct.', 'A23');
+          setLabel('lbl_r02_a24', 'Rejection Rate', 'A24');
+          setLabel('lbl_r02_a25', 'RO Run Hour', 'A25');
+
+          const c1Text = descs["A28"] || 'Carbon Filter 1';
+          const c2Text = (descs["A29"] || 'Carbon Filter 2') + ' (Optional)';
+          const c3Text = (descs["A30"] || 'Carbon Filter 3') + ' (Optional)';
+          const s1Text = descs["A32"] || 'Softener Filter 1';
+          const s2Text = (descs["A33"] || 'Softener Filter 2') + ' (Optional)';
+
+          document.getElementById('lbl_r02_a28').textContent = c1Text;
+          document.getElementById('lbl_r02_a29').textContent = c2Text;
+          document.getElementById('lbl_r02_a30').textContent = c3Text;
+          document.getElementById('lbl_r02_a32').textContent = s1Text;
+          document.getElementById('lbl_r02_a33').textContent = s2Text;
+          setLabel('lbl_r02_a34', 'Brine Tank', 'A34');
+
+          // Dynamic References (Col B)
+          document.getElementById('ref_r02_b10').textContent = formatRef(refs["B10"]);
+          document.getElementById('ref_r02_b11').textContent = formatRef(refs["B11"]);
+          document.getElementById('ref_r02_b12').textContent = formatRef(refs["B12"]);
+          document.getElementById('ref_r02_b13').textContent = formatRef(refs["B13"]);
+          document.getElementById('ref_r02_b14').textContent = formatRef(refs["B14"]);
+          document.getElementById('ref_r02_b15').textContent = formatRef(refs["B15"]);
+          document.getElementById('ref_r02_b16').textContent = formatRef(refs["B16"]);
+          document.getElementById('ref_r02_b17').textContent = formatRef(refs["B17"]);
+          document.getElementById('ref_r02_b18').textContent = formatRef(refs["B18"]);
+          document.getElementById('ref_r02_b19').textContent = formatRef(refs["B19"]);
+          document.getElementById('ref_r02_b20').textContent = formatRef(refs["B20"]);
+          document.getElementById('ref_r02_b21').textContent = formatRef(refs["B21"]);
+          document.getElementById('ref_r02_b22').textContent = formatRef(refs["B22"]);
+          document.getElementById('ref_r02_b23').textContent = formatRef(refs["B23"]);
+          document.getElementById('ref_r02_b24').textContent = formatRef(refs["B24"]);
+          document.getElementById('ref_r02_b25').textContent = formatRef(refs["B25"]);
+
+          document.getElementById('ref_r02_b28').textContent = formatRef(refs["B28"]);
+          document.getElementById('ref_r02_b29').textContent = formatRef(refs["B29"]);
+          document.getElementById('ref_r02_b30').textContent = formatRef(refs["B30"]);
+          document.getElementById('ref_r02_b32').textContent = formatRef(refs["B32"]);
+          document.getElementById('ref_r02_b33').textContent = formatRef(refs["B33"]);
+
+          // RO Tank for RO 02 uses Rows 36, 37, 38, 39
+          setLabel('lbl_rot_uv', 'UV Light Intensity', 'A36');
+          setLabel('lbl_rot_pre', 'Pre Filter', 'A37');
+          setLabel('lbl_rot_post', 'Post Filter', 'A38');
+          setLabel('lbl_rot_ret', 'Return', 'A39');
+
+          document.getElementById('ref_rot_uv').textContent   = formatRef(refs["B36"]);
+          document.getElementById('ref_rot_pre').textContent  = formatRef(refs["B37"]);
+          document.getElementById('ref_rot_post').textContent = formatRef(refs["B38"]);
+          document.getElementById('ref_rot_ret').textContent  = formatRef(refs["B39"]);
+
+          document.getElementById('secRO01').style.display = "none";
+          document.getElementById('secRO02').style.display = "block";
+          toggleRequired('secRO01', false);
+          toggleRequired('secRO02', true);
+        }
+
+        toggleRequired('secTank', true);
+        document.getElementById('secTank').style.display = "block";
+      } else {
+        showMessage("Failed to load details: " + res.error, "error");
+      }
+    })
+    .catch(err => showMessage("Asset load error: " + err, "error"));
+  }
+
+  function toggleRequired(containerId, isReq) {
+    const c = document.getElementById(containerId);
+    c.querySelectorAll('input, select').forEach(el => {
+      const isOptionalField = (
+        el.id === "r02_carbonF2" || 
+        el.id === "r02_carbonF3" || 
+        el.id === "r02_softener2" ||
+        (el.placeholder && el.placeholder.includes("Optional"))
+      );
+
+      if (!isOptionalField) {
+        if (isReq) el.setAttribute('required', 'true');
+        else el.removeAttribute('required');
+      } else {
+        el.removeAttribute('required');
+      }
+    });
+  }
+
+  document.getElementById('dailyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const ro = document.getElementById('selectRo').value;
+    const staff = document.getElementById('staffName').value.trim();
+
+    let roData = {};
+    if (ro === "RO 01") {
+      roData = {
+        sysIn: document.getElementById('r01_sysIn').value,
+        sysOut: document.getElementById('r01_sysOut').value,
+        rawWater: document.getElementById('r01_rawWater').value,
+        filter: document.getElementById('r01_filter').value,
+        carbon1: document.getElementById('r01_carbon1').value,
+        carbon2: document.getElementById('r01_carbon2').value,
+        guardIn: document.getElementById('r01_guardIn').value,
+        guardOut: document.getElementById('r01_guardOut').value,
+        permeate: document.getElementById('r01_permeate').value,
+        conductivity: document.getElementById('r01_conductivity').value,
+        permeateFlow: document.getElementById('r01_permFlow').value,
+        reject: document.getElementById('r01_reject').value,
+        runHours: document.getElementById('r01_runHour').value,
+        hardness: document.getElementById('r01_hardness').value,
+        chlorine: document.getElementById('r01_chlorine').value,
+        brineTank: document.getElementById('r01_brineTank').value
+      };
+    } else {
+      roData = {
+        rawWater: document.getElementById('r02_rawWater').value,
+        sediment: document.getElementById('r02_sediment').value,
+        carbon1: document.getElementById('r02_carbon1').value,
+        carbon2: document.getElementById('r02_carbon2').value,
+        carbon3: document.getElementById('r02_carbon3').value,
+        guardIn: document.getElementById('r02_guardIn').value,
+        guardOut: document.getElementById('r02_guardOut').value,
+        sysIn: document.getElementById('r02_sysIn').value,
+        sysOut: document.getElementById('r02_sysOut').value,
+        permeate: document.getElementById('r02_permeate').value,
+        permeateFlow: document.getElementById('r02_permFlow').value,
+        rejectFlow: document.getElementById('r02_rejectFlow').value,
+        rawConductivity: document.getElementById('r02_rawCond').value,
+        permConductivity: document.getElementById('r02_permCond').value,
+        rejectionRate: document.getElementById('r02_rejectRate').value,
+        runHours: document.getElementById('r02_runHour').value,
+        carbonFilter1: document.getElementById('r02_carbonF1').value,
+        carbonFilter2: document.getElementById('r02_carbonF2').value,
+        carbonFilter3: document.getElementById('r02_carbonF3').value,
+        softener1: document.getElementById('r02_softener1').value,
+        softener2: document.getElementById('r02_softener2').value,
+        brineTank: document.getElementById('r02_brineTank').value
+      };
+    }
+
+    const tankData = {
+      uvIntensity: document.getElementById('rot_uvIntensity').value,
+      preFilter: document.getElementById('rot_preFilter').value,
+      postFilter: document.getElementById('rot_postFilter').value,
+      returnPress: document.getElementById('rot_return').value
+    };
+
+    const submitBtn = document.getElementById('btnSubmit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Writing to Database...";
+
+    fetch(SCRIPT_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        action: "saveDailyLog",
+        payload: { roNo: ro, staffName: staff, roData: roData, tankData: tankData }
+      })
+    })
+    .then(r => r.json())
+    .then(res => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Daily Log";
+
+      if (res.success) {
+        document.getElementById('modalMsg').textContent = res.message;
+        document.getElementById('successModal').style.display = "flex";
+      } else {
+        showMessage("Submission Error: " + res.error, "error");
+      }
+    })
+    .catch(err => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Daily Log";
+      showMessage("Network Error: " + err, "error");
+    });
+  });
+
+  function resetAll() {
+    document.getElementById('dailyForm').reset();
+    document.getElementById('assetSection').style.display = "none";
+    document.getElementById('secRO01').style.display = "none";
+    document.getElementById('secRO02').style.display = "none";
+    document.getElementById('secTank').style.display = "none";
+    hideMessage();
+  }
+
+  function closeModal() {
+    document.getElementById('successModal').style.display = "none";
+    resetAll();
+  }
+
+  function showMessage(text, type) {
+    const msg = document.getElementById('message-area');
+    msg.style.display = "block";
+    msg.textContent = text;
+    msg.className = type === "error" ? "error" : (type === "success" ? "success" : "normal");
+  }
+
+  function hideMessage() {
+    document.getElementById('message-area').style.display = "none";
+  }
+</script>
+
+</body>
+</html>
